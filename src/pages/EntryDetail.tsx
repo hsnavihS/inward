@@ -1,12 +1,19 @@
+// react
+import { useState } from "react";
+
 // routing
 import { useParams, Link } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
 
+// components
+import EntryForm from "../components/EntryForm";
+
 export default function EntryDetail() {
   const { id } = useParams<{ id: string }>();
-  const { getEntry } = useEntries();
+  const { getEntry, updateEntry } = useEntries();
+  const [editing, setEditing] = useState(false);
 
   const entry = getEntry(id!);
 
@@ -15,6 +22,25 @@ export default function EntryDetail() {
       <div>
         <p className="dim">Entry not found.</p>
         <Link to="/">{'<'} back</Link>
+      </div>
+    );
+  }
+
+  if (editing) {
+    return (
+      <div>
+        <h1>Edit Entry</h1>
+        <EntryForm
+          initialTitle={entry.title}
+          initialBody={entry.body}
+          initialTags={entry.tags}
+          submitLabel="update"
+          onSubmit={({ title, body, tags }) => {
+            updateEntry(id!, { title, body, tags });
+            setEditing(false);
+          }}
+          onCancel={() => setEditing(false)}
+        />
       </div>
     );
   }
@@ -39,6 +65,9 @@ export default function EntryDetail() {
         </div>
       )}
       <div className="entry-body">{entry.body}</div>
+      <div className="action-bar">
+        <button onClick={() => setEditing(true)}>edit</button>
+      </div>
     </div>
   );
 }

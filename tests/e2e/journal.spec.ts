@@ -60,6 +60,31 @@ test.describe("journal core flows", () => {
     await expect(page.locator(".tag").first()).toContainText("journal");
   });
 
+  test("edit entry and see updated content", async ({ page }) => {
+    await unlock(page);
+
+    // Create an entry
+    await page.click('a:has-text("new")');
+    await page.fill('input[placeholder="title"]', "Original title");
+    await page.fill('textarea', "Original body");
+    await page.click('button:has-text("save")');
+    await expect(page.locator("h1")).toContainText("Original title");
+
+    // Switch to edit mode
+    await page.click('button:has-text("edit")');
+    await expect(page.locator('input[placeholder="title"]')).toHaveValue("Original title");
+
+    // Update fields
+    await page.fill('input[placeholder="title"]', "Updated title");
+    await page.fill('textarea', "Updated body");
+    await page.click('button:has-text("update")');
+
+    // Back in read mode with updated content
+    await expect(page.locator("h1")).toContainText("Updated title");
+    await expect(page.locator(".entry-body")).toContainText("Updated body");
+    await expect(page.locator(".entry-meta")).toContainText("Edited:");
+  });
+
   test("entry persists after page reload", async ({ page }) => {
     await unlock(page);
 
