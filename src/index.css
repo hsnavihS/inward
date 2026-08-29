@@ -133,7 +133,8 @@ a:hover {
 input[type="text"],
 input[type="password"],
 input:not([type]),
-textarea {
+textarea,
+select {
   font-family: var(--font-mono);
   font-size: 15px;
   width: 100%;
@@ -153,9 +154,19 @@ textarea::placeholder {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   border-color: var(--accent-dim);
   box-shadow: 0 0 8px rgba(51, 255, 153, 0.15), inset 0 0 4px rgba(51, 255, 153, 0.05);
+}
+
+select {
+  cursor: pointer;
+  padding-right: 28px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b9caa' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 
 textarea {
@@ -236,6 +247,100 @@ form button[type="submit"] {
 
 form button[type="submit"]:hover:not(:disabled) {
   background: rgba(51, 255, 153, 0.2);
+}
+
+/* ── Search bar ────────────────────────────────────── */
+
+.search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-row input {
+  flex: 1;
+}
+
+.filter-toggle {
+  padding: 8px 12px;
+  font-size: 16px;
+  min-width: auto;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.filter-toggle.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Filter panel ─────────────────────────────────── */
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.date-filter {
+  display: flex;
+  gap: 8px;
+}
+
+.date-filter select {
+  flex: 1;
+}
+
+/* ── Divider ──────────────────────────────────────── */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+/* ── Tag filter pills ─────────────────────────────── */
+
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.tag-pill {
+  padding: 4px 12px;
+  font-size: 13px;
+  min-width: auto;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.tag-pill:hover:not(:disabled) {
+  border-color: var(--accent-dim);
+  box-shadow: none;
+  text-shadow: none;
+  background: rgba(51, 255, 153, 0.03);
+}
+
+.tag-pill.selected {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: var(--glow);
+}
+
+.tag-pill.selected:hover:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+
+.tag-toggle {
+  padding: 4px 10px;
 }
 
 /* ── Lists ────────────────────────────────────────── */
