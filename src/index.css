@@ -2,7 +2,7 @@
    INWARD — CRT Terminal Theme
    ═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
   --bg: #0a0a0f;
@@ -19,9 +19,9 @@
   --danger-dim: #992222;
   --warn: #ffaa33;
 
-  --font-heading: 'VT323', 'Courier New', monospace;
-  --font-body: 'Share Tech Mono', 'Consolas', 'Courier New', monospace;
-  --font-mono: 'Share Tech Mono', 'Consolas', monospace;
+  --font-heading: 'Ubuntu Mono', 'Courier New', monospace;
+  --font-body: 'Ubuntu Mono', 'Consolas', 'Courier New', monospace;
+  --font-mono: 'Ubuntu Mono', 'Consolas', monospace;
 
   --glow: 0 0 8px rgba(51, 255, 153, 0.3), 0 0 20px rgba(51, 255, 153, 0.1);
   --glow-strong: 0 0 10px rgba(51, 255, 153, 0.5), 0 0 30px rgba(51, 255, 153, 0.2);
@@ -41,7 +41,9 @@
 
 /* ── Reset ────────────────────────────────────────── */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -425,7 +427,9 @@ li strong {
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ── Word count ───────────────────────────────────── */
