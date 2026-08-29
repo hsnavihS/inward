@@ -10,6 +10,7 @@ import { useVault } from "./VaultContext";
 
 // utilities
 import { encryptAndSave, loadAndDecrypt } from "../storage";
+import { pushTags, pullTags } from "../sync";
 
 const TAGS_KEY = "tags";
 
@@ -28,15 +29,40 @@ export function useTags(): TagsContext {
 }
 
 export function TagsProvider({ children }: { children: ReactNode }) {
-  const { key } = useVault();
+  const { key, vaultId } = useVault();
   const [tags, setTags] = useState<Tag[]>([]);
 
-  // Load tags on boot
+  // Load tags: indexedDb first, then merge with Firestore
   useEffect(() => {
-    loadAndDecrypt<Tag[]>(TAGS_KEY, key)
-      .then((data) => setTags(data ?? []))
-      .catch((err) => console.error("Failed to load tags:", err));
-  }, [key]);
+    (async () => {
+      try {
+        const local = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key)) ?? [];
+        setTags(local);
+
+        const remote = await pullTags<Tag[]>(vaultId, key);
+        if (remote && remote.length > 0) {
+          const localNames = new Set(local.map((t) => t.name));
+          const merged = [...local, ...remote.filter((t) => !localNames.has(t.name))];
+          if (merged.length > local.length) {
+            setTags(merged);
+            await encryptAndSave(TAGS_KEY, merged, key);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load tags:", err);
+      }
+    })();
+  }, [key, vaultId]);
+
+  const persistTags = (updated: Tag[]) => {
+    setTags(updated);
+    encryptAndSave(TAGS_KEY, updated, key).catch((err) =>
+      console.error("Failed to save tags:", err)
+    );
+    pushTags(vaultId, updated, key).catch((err) =>
+      console.error("Failed to sync tags:", err)
+    );
+  };
 
   const addTag = useCallback((name: string): Tag | null => {
     const normalized = name.trim().toLowerCase();
@@ -46,13 +72,9 @@ export function TagsProvider({ children }: { children: ReactNode }) {
     if (existing) return existing;
 
     const tag: Tag = { name: normalized, createdAt: Date.now() };
-    const updated = [...tags, tag];
-    setTags(updated);
-    encryptAndSave(TAGS_KEY, updated, key).catch((err) =>
-      console.error("Failed to save tags:", err)
-    );
+    persistTags([...tags, tag]);
     return tag;
-  }, [tags, key]);
+  }, [tags, key, vaultId]);
 
   const searchTags = useCallback((query: string): Tag[] => {
     const q = query.trim().toLowerCase();

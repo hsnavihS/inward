@@ -10,6 +10,7 @@ import { useVault } from "./VaultContext";
 
 // utilities
 import { encryptAndSave, loadAndDecrypt } from "../storage";
+import { pushEntry, pullEntries, deleteRemoteEntry, mergeEntries } from "../sync";
 
 const ENTRIES_KEY = "entries";
 
@@ -32,18 +33,31 @@ export function useEntries(): EntriesContext {
 }
 
 export function EntriesProvider({ children }: { children: ReactNode }) {
-  const { key } = useVault();
+  const { key, vaultId } = useVault();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Load entries on boot
+  // Load entries: indexedDb first, then merge with Firestore
   useEffect(() => {
-    loadAndDecrypt<Entry[]>(ENTRIES_KEY, key)
-      .then((data) => setEntries(data ?? []))
-      .catch((err) => setError("Failed to load entries: " + err.message))
-      .finally(() => setLoading(false));
-  }, [key]);
+    (async () => {
+      try {
+        const local = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key)) ?? [];
+        setEntries(local);
+
+        const remote = await pullEntries<Entry>(vaultId, key);
+        if (remote.length > 0) {
+          const merged = mergeEntries(local, remote);
+          setEntries(merged);
+          await encryptAndSave(ENTRIES_KEY, merged, key);
+        }
+      } catch (err) {
+        setError("Failed to load entries: " + (err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [key, vaultId]);
 
   const persistAndSet = (updated: Entry[]) => {
     setEntries(updated);
@@ -61,20 +75,33 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
       updatedAt: now,
     };
     persistAndSet([entry, ...entries]);
+    pushEntry(vaultId, entry, key).catch((err) =>
+      console.error("Failed to sync entry:", err)
+    );
     return entry;
-  }, [entries, key]);
+  }, [entries, key, vaultId]);
 
   const getEntry = useCallback((id: string) => {
     return entries.find((e) => e.id === id);
   }, [entries]);
 
   const updateEntry = useCallback((id: string, input: Partial<Omit<Entry, "id" | "createdAt" | "updatedAt">>) => {
-    persistAndSet(entries.map((e) => (e.id === id ? { ...e, ...input, updatedAt: Date.now() } : e)));
-  }, [entries, key]);
+    const updated = entries.map((e) => (e.id === id ? { ...e, ...input, updatedAt: Date.now() } : e));
+    persistAndSet(updated);
+    const entry = updated.find((e) => e.id === id);
+    if (entry) {
+      pushEntry(vaultId, entry, key).catch((err) =>
+        console.error("Failed to sync entry:", err)
+      );
+    }
+  }, [entries, key, vaultId]);
 
   const deleteEntry = useCallback((id: string) => {
     persistAndSet(entries.filter((e) => e.id !== id));
-  }, [entries, key]);
+    deleteRemoteEntry(vaultId, id).catch((err) =>
+      console.error("Failed to delete remote entry:", err)
+    );
+  }, [entries, key, vaultId]);
 
   return (
     <Ctx.Provider value={{ entries, loading, error, addEntry, getEntry, updateEntry, deleteEntry }}>
