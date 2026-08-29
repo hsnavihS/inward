@@ -85,6 +85,31 @@ test.describe("journal core flows", () => {
     await expect(page.locator(".entry-meta")).toContainText("Edited:");
   });
 
+  test("delete entry with confirmation", async ({ page }) => {
+    await unlock(page);
+
+    // Create an entry
+    await page.click('a:has-text("new")');
+    await page.fill('input[placeholder="title"]', "Doomed entry");
+    await page.fill('textarea', "This will be deleted");
+    await page.click('button:has-text("save")');
+    await expect(page.locator("h1")).toContainText("Doomed entry");
+
+    // Click delete, cancel first
+    await page.click('button:has-text("delete")');
+    await expect(page.locator(".modal")).toBeVisible();
+    await page.click('.modal button:has-text("cancel")');
+    await expect(page.locator(".modal")).not.toBeVisible();
+    await expect(page.locator("h1")).toContainText("Doomed entry");
+
+    // Click delete, confirm
+    await page.click('button:has-text("delete")');
+    await page.click('.modal button:has-text("delete")');
+
+    // Should be back on home with no entries
+    await expect(page.locator(".empty-state")).toBeVisible();
+  });
+
   test("entry persists after page reload", async ({ page }) => {
     await unlock(page);
 

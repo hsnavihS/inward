@@ -2,18 +2,21 @@
 import { useState } from "react";
 
 // routing
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
 
 // components
 import EntryForm from "../components/EntryForm";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function EntryDetail() {
   const { id } = useParams<{ id: string }>();
-  const { getEntry, updateEntry } = useEntries();
+  const { getEntry, updateEntry, deleteEntry } = useEntries();
+  const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const entry = getEntry(id!);
 
@@ -67,7 +70,15 @@ export default function EntryDetail() {
       <div className="entry-body">{entry.body}</div>
       <div className="action-bar">
         <button onClick={() => setEditing(true)}>edit</button>
+        <button className="btn-danger" onClick={() => setShowDeleteModal(true)}>delete</button>
       </div>
+      {showDeleteModal && (
+        <ConfirmModal
+          message="Delete this entry? This cannot be undone."
+          onConfirm={() => { deleteEntry(id!); navigate("/"); }}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
     </div>
   );
 }

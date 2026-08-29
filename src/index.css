@@ -257,6 +257,13 @@ li {
   transition: border-color 0.2s, background 0.2s;
 }
 
+li.entry-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 li:hover {
   border-color: var(--accent-dim);
   background: rgba(51, 255, 153, 0.03);
@@ -266,6 +273,13 @@ li strong {
   color: var(--text-h);
   font-weight: 600;
   font-size: 16px;
+}
+
+.btn-sm {
+  padding: 2px 8px;
+  font-size: 16px;
+  line-height: 1;
+  min-width: auto;
 }
 
 /* ── Tags ─────────────────────────────────────────── */
@@ -515,4 +529,37 @@ li strong {
 ::selection {
   background: rgba(51, 255, 153, 0.25);
   color: #fff;
+}
+
+/* ── Confirmation Modal ───────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glow);
+  padding: 24px 32px;
+  border-radius: 4px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(51, 255, 153, 0.1);
+}
+
+.modal p {
+  margin-bottom: 20px;
+  color: var(--text-h);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
