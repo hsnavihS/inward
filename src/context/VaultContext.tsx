@@ -68,22 +68,23 @@ function UnlockScreen({
   };
 
   return (
-    <div style={{ maxWidth: 320, margin: "20vh auto", textAlign: "center" }}>
+    <div className="unlock-screen">
       <h1>Inward</h1>
+      <p className="dim">Enter passphrase to unlock</p>
       <form onSubmit={handleSubmit}>
         <input
           type="password"
-          placeholder="Enter passphrase"
+          placeholder="passphrase"
           value={passphrase}
           onChange={(e) => setPassphrase(e.target.value)}
           disabled={loading}
           autoFocus
         />
         <button type="submit" disabled={loading || !passphrase.trim()}>
-          {loading ? "Unlocking..." : "Unlock"}
+          {loading ? "decrypting..." : "[ unlock ]"}
         </button>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }

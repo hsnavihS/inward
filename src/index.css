@@ -1,8 +1,514 @@
+/* ═══════════════════════════════════════════════════════
+   INWARD — CRT Terminal Theme
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
 :root {
-  font-family: system-ui, sans-serif;
+  --bg: #0a0a0f;
+  --bg-surface: #12121a;
+  --bg-card: #16162266;
+  --border: #2a2a3a;
+  --border-glow: #33ff9944;
+  --text: #8b9caa;
+  --text-h: #d4ffe0;
+  --accent: #33ff99;
+  --accent-dim: #1a9960;
+  --accent-bg: rgba(51, 255, 153, 0.08);
+  --danger: #ff4444;
+  --danger-dim: #992222;
+  --warn: #ffaa33;
+
+  --font-heading: 'VT323', 'Courier New', monospace;
+  --font-body: 'Share Tech Mono', 'Consolas', 'Courier New', monospace;
+  --font-mono: 'Share Tech Mono', 'Consolas', monospace;
+
+  --glow: 0 0 8px rgba(51, 255, 153, 0.3), 0 0 20px rgba(51, 255, 153, 0.1);
+  --glow-strong: 0 0 10px rgba(51, 255, 153, 0.5), 0 0 30px rgba(51, 255, 153, 0.2);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+/* ── Reset ────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  padding: 1rem;
+  background: var(--bg);
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px);
+  background-attachment: fixed;
+}
+
+/* CRT vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 9999;
+}
+
+#root {
+  width: 820px;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100svh;
+  padding: 24px 32px 48px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 32px;
+  }
+}
+
+/* ── Typography ───────────────────────────────────── */
+
+h1 {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 400;
+  color: var(--accent);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin: 24px 0 8px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text-h);
+  text-shadow: 0 0 6px rgba(51, 255, 153, 0.2);
+  margin: 0 0 12px;
+}
+
+p {
+  margin: 8px 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent-dim);
+  transition: text-shadow 0.2s, border-color 0.2s;
+}
+
+a:hover {
+  text-shadow: var(--glow);
+  border-color: var(--accent);
+}
+
+/* ── Inputs ───────────────────────────────────────── */
+
+input[type="text"],
+input[type="password"],
+input:not([type]),
+textarea {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #4a5568;
+  font-style: italic;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 8px rgba(51, 255, 153, 0.15), inset 0 0 4px rgba(51, 255, 153, 0.05);
+}
+
+textarea {
+  font-family: var(--font-mono);
+  resize: vertical;
+}
+
+/* ── Buttons ──────────────────────────────────────── */
+
+button {
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+  text-shadow: var(--glow);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+button.btn-danger {
+  color: var(--danger);
+  border-color: var(--danger-dim);
+}
+
+button.btn-danger:hover:not(:disabled) {
+  background: rgba(255, 68, 68, 0.1);
+  border-color: var(--danger);
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.2);
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.4);
+  color: #ff6666;
+}
+
+/* ── Forms ────────────────────────────────────────── */
+
+form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+form input,
+form textarea {
+  background: var(--bg);
+}
+
+form button[type="submit"] {
+  align-self: flex-end;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+}
+
+form button[type="submit"]:hover:not(:disabled) {
+  background: rgba(51, 255, 153, 0.2);
+}
+
+/* ── Lists ────────────────────────────────────────── */
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+li {
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+li:hover {
+  border-color: var(--accent-dim);
+  background: rgba(51, 255, 153, 0.03);
+}
+
+li strong {
+  color: var(--text-h);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* ── Tags ─────────────────────────────────────────── */
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 8px;
+  margin: 2px 4px 2px 0;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+  color: var(--accent-dim);
+  background: var(--bg-surface);
+  transition: all 0.2s;
+}
+
+.tag:hover {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+  background: rgba(51, 255, 153, 0.04);
+}
+
+.tag-active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 6px rgba(51, 255, 153, 0.15);
+}
+
+/* ── Tag suggestions ──────────────────────────────── */
+
+.tag-suggestions {
+  list-style: none;
+  padding: 4px 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tag-suggestions li {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent-dim);
+  background: transparent;
+  border: none;
+}
+
+.tag-suggestions li:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: none;
+}
+
+/* ── Dim / bright text ────────────────────────────── */
+
+.dim {
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.bright {
+  color: var(--text-h);
+}
+
+/* ── Error ────────────────────────────────────────── */
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+  padding: 8px 12px;
+  background: rgba(255, 68, 68, 0.08);
+  border-left: 3px solid var(--danger);
+  margin: 8px 0;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+}
+
+/* ── Back link ────────────────────────────────────── */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* ── Entry detail body ────────────────────────────── */
+
+.entry-body {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: var(--text-h);
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Entry meta ───────────────────────────────────── */
+
+.entry-meta {
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.6;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Unlock screen ────────────────────────────────── */
+
+.unlock-screen {
+  max-width: 380px;
+  margin: 20vh auto;
+  text-align: center;
+}
+
+.unlock-screen input {
+  margin-bottom: 12px;
+}
+
+.unlock-screen button {
+  width: 100%;
+  padding: 10px;
+  border-style: dashed;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+/* ── Header bar ───────────────────────────────────── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  text-align: left;
+}
+
+/* ── Empty state ──────────────────────────────────── */
+
+.empty-state {
+  font-style: italic;
+  color: var(--text);
+  padding: 32px 0;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.empty-state::before {
+  content: '█ ';
+  animation: blink 1s step-end infinite;
+  color: var(--accent);
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── Word count ───────────────────────────────────── */
+
+.word-count {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.5;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Tag input row ────────────────────────────────── */
+
+.tag-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tag-input-row input {
+  flex: 1;
+}
+
+.tag-input-row button {
+  flex-shrink: 0;
+  padding: 8px 14px;
+}
+
+/* ── Selected tags ────────────────────────────────── */
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.selected-tags button {
+  font-size: 11px;
+  padding: 1px 6px;
+  border: none;
+  color: var(--danger);
+  letter-spacing: 0;
+}
+
+.selected-tags button:hover {
+  color: #ff6666;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ── Action bar (detail page) ─────────────────────── */
+
+.action-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ── Scrollbar ────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
+}
+
+/* ── Selection highlight ──────────────────────────── */
+
+::selection {
+  background: rgba(51, 255, 153, 0.25);
+  color: #fff;
 }

@@ -35,75 +35,65 @@ export default function CreateEntry() {
   };
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div>
       <h1>New Entry</h1>
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          autoFocus
+        />
+        <textarea
+          placeholder="write in markdown..."
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={12}
+        />
         <div>
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            autoFocus
-            style={{ width: "100%", marginBottom: "0.5rem" }}
-          />
-        </div>
-        <div>
-          <textarea
-            placeholder="Write in markdown..."
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={12}
-            style={{ width: "100%", marginBottom: "0.5rem" }}
-          />
-        </div>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <input
-            type="text"
-            placeholder="Add tag (max 5)"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                selectTag(tagInput);
-              }
-            }}
-            disabled={tags.length >= 5}
-          />
-          <button type="button" onClick={() => selectTag(tagInput)} disabled={tags.length >= 5}>
-            Add
-          </button>
+          <div className="tag-input-row">
+            <input
+              type="text"
+              placeholder="add tag (max 5)"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  selectTag(tagInput);
+                }
+              }}
+              disabled={tags.length >= 5}
+            />
+            <button type="button" onClick={() => selectTag(tagInput)} disabled={tags.length >= 5}>
+              add
+            </button>
+          </div>
           {suggestions.length > 0 && (
-            <ul style={{ listStyle: "none", padding: "0.25rem 0", margin: 0, fontSize: "0.85rem" }}>
+            <ul className="tag-suggestions">
               {suggestions.map((t) => (
-                <li
-                  key={t.name}
-                  style={{ cursor: "pointer", padding: "0.15rem 0" }}
-                  onClick={() => selectTag(t.name)}
-                >
+                <li key={t.name} onClick={() => selectTag(t.name)}>
                   #{t.name}
                 </li>
               ))}
             </ul>
           )}
-          <div style={{ marginTop: "0.25rem" }}>
-            {tags.map((t) => (
-              <span key={t.name} style={{ marginRight: "0.5rem" }}>
-                #{t.name}{" "}
-                <button type="button" onClick={() => removeTag(t.name)} style={{ cursor: "pointer" }}>
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
+          {tags.length > 0 && (
+            <div className="selected-tags">
+              {tags.map((t) => (
+                <span key={t.name}>
+                  <span className="tag">#{t.name}</span>
+                  <button type="button" onClick={() => removeTag(t.name)}>×</button>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <button type="submit" disabled={!title.trim()}>
-          Save
-        </button>
-        <button type="button" onClick={() => navigate("/")} style={{ marginLeft: "0.5rem" }}>
-          Cancel
-        </button>
+        <div className="action-bar">
+          <button type="submit" disabled={!title.trim()}>save</button>
+          <button type="button" onClick={() => navigate("/")}>cancel</button>
+        </div>
       </form>
     </div>
   );

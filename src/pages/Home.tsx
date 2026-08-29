@@ -6,27 +6,29 @@ export default function Home() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="header">
         <h1>Inward</h1>
-        <Link to="/create">New Entry</Link>
+        <Link to="/create">[ + new ]</Link>
       </div>
 
       {entries.length === 0 ? (
-        <p>No entries yet.</p>
+        <p className="empty-state">No entries yet. Start writing.</p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul>
           {entries.map((e) => (
-            <li key={e.id} style={{ marginBottom: "0.5rem" }}>
-              <Link to={`/entry/${e.id}`}>
+            <li key={e.id}>
+              <Link to={`/entry/${e.id}`} style={{ borderBottom: "none" }}>
                 <strong>{e.title}</strong>
-                <span style={{ marginLeft: "1rem", opacity: 0.6 }}>
+                <span className="dim" style={{ marginLeft: "1rem", fontSize: "13px" }}>
                   {new Date(e.createdAt).toLocaleDateString()}
                 </span>
               </Link>
               {e.tags.length > 0 && (
-                <span style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}>
-                  {e.tags.map((t) => `#${t.name}`).join(" ")}
-                </span>
+                <div style={{ marginTop: "6px" }}>
+                  {e.tags.map((t) => (
+                    <span key={t.name} className="tag">#{t.name}</span>
+                  ))}
+                </div>
               )}
             </li>
           ))}
