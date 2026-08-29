@@ -1,6 +1,9 @@
+// react
 import { createContext, useContext, useState } from "react";
-import { deriveKey, deriveVaultId, verifyPassphrase } from "../crypto";
 import type { ReactNode } from "react";
+
+// utilities
+import { deriveKey, deriveVaultId, verifyPassphrase } from "../crypto";
 
 interface VaultContext {
   key: CryptoKey;

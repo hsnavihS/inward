@@ -1,8 +1,15 @@
+// react
 import { useState } from "react";
+
+// routing
 import { useNavigate } from "react-router-dom";
+
+// types
+import type { Tag } from "../types/Tag";
+
+// context
 import { useEntries } from "../context/EntriesContext";
 import { useTags } from "../context/TagsContext";
-import type { Tag } from "../types/Tag";
 
 export default function CreateEntry() {
   const { addEntry } = useEntries();

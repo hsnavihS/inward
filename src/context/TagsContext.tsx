@@ -1,6 +1,17 @@
-import { createContext, useContext, useState, useCallback } from "react";
+// react
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
+
+// types
 import type { Tag } from "../types/Tag";
+
+// context
+import { useVault } from "./VaultContext";
+
+// utilities
+import { encryptAndSave, loadAndDecrypt } from "../storage";
+
+const TAGS_KEY = "tags";
 
 interface TagsContext {
   tags: Tag[];
@@ -17,7 +28,15 @@ export function useTags(): TagsContext {
 }
 
 export function TagsProvider({ children }: { children: ReactNode }) {
+  const { key } = useVault();
   const [tags, setTags] = useState<Tag[]>([]);
+
+  // Load tags on boot
+  useEffect(() => {
+    loadAndDecrypt<Tag[]>(TAGS_KEY, key)
+      .then((data) => setTags(data ?? []))
+      .catch((err) => console.error("Failed to load tags:", err));
+  }, [key]);
 
   const addTag = useCallback((name: string): Tag | null => {
     const normalized = name.trim().toLowerCase();
@@ -27,9 +46,13 @@ export function TagsProvider({ children }: { children: ReactNode }) {
     if (existing) return existing;
 
     const tag: Tag = { name: normalized, createdAt: Date.now() };
-    setTags((prev) => [...prev, tag]);
+    const updated = [...tags, tag];
+    setTags(updated);
+    encryptAndSave(TAGS_KEY, updated, key).catch((err) =>
+      console.error("Failed to save tags:", err)
+    );
     return tag;
-  }, [tags]);
+  }, [tags, key]);
 
   const searchTags = useCallback((query: string): Tag[] => {
     const q = query.trim().toLowerCase();

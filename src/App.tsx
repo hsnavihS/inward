@@ -1,7 +1,12 @@
+// routing
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// context providers
 import { VaultProvider } from "./context/VaultContext";
 import { EntriesProvider } from "./context/EntriesContext";
 import { TagsProvider } from "./context/TagsContext";
+
+// pages
 import Home from "./pages/Home";
 import CreateEntry from "./pages/CreateEntry";
 import EntryDetail from "./pages/EntryDetail";

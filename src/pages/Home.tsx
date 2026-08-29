@@ -1,4 +1,7 @@
+// routing
 import { Link } from "react-router-dom";
+
+// context
 import { useEntries } from "../context/EntriesContext";
 
 export default function Home() {
