@@ -5,7 +5,18 @@ import { Link } from "react-router-dom";
 import { useEntries } from "../context/EntriesContext";
 
 export default function Home() {
-  const { entries } = useEntries();
+  const { entries, loading } = useEntries();
+
+  if (loading) {
+    return (
+      <div>
+        <div className="header">
+          <h1>Inward</h1>
+        </div>
+        <p className="empty-state">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveKey, deriveVaultId, encrypt, decrypt } from "../src/crypto";
+import { deriveKey, deriveVaultId, encrypt, decrypt } from "../../src/crypto";
 
 describe("deriveKey", () => {
   it("produces a valid AES-GCM CryptoKey", async () => {
