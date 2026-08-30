@@ -68,6 +68,9 @@ export default function EntryDetail() {
         </div>
       )}
       <div className="entry-body">{entry.body}</div>
+      <p className="dim" style={{ fontSize: "13px", marginTop: "8px" }}>
+        {entry.body.trim() ? entry.body.trim().split(/\s+/).length : 0} words
+      </p>
       <div className="action-bar">
         <button onClick={() => setEditing(true)}>edit</button>
         <button className="btn-danger" onClick={() => setShowDeleteModal(true)}>delete</button>
