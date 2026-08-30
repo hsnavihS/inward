@@ -1,11 +1,12 @@
 // react
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // routing
 import { useParams, useNavigate } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
+import { useTheme } from "../context/ThemeContext";
 
 // components
 import Navbar from "../components/Navbar";
@@ -17,12 +18,21 @@ import ReactMarkdown from "react-markdown";
 export default function EntryDetail() {
   const { id } = useParams<{ id: string }>();
   const { getEntry, updateEntry, deleteEntry } = useEntries();
+  const { setTemporaryTheme, restoreTheme } = useTheme();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const entry = getEntry(id!);
+
+  // Apply entry's mood as temporary theme
+  useEffect(() => {
+    if (entry?.mood) {
+      setTemporaryTheme(entry.mood);
+    }
+    return () => restoreTheme();
+  }, [entry?.mood, setTemporaryTheme, restoreTheme]);
 
   const formatTime = (ts: EpochTimeStamp) =>
     new Date(ts).toLocaleString(undefined, {
@@ -49,9 +59,10 @@ export default function EntryDetail() {
           initialBody={entry.body}
           initialTags={entry.tags}
           initialImages={entry.images}
+          initialMood={entry.mood}
           submitLabel="update"
-          onSubmit={({ title, body, tags, images }) => {
-            updateEntry(id!, { title, body, tags, images });
+          onSubmit={({ title, body, tags, images, mood }) => {
+            updateEntry(id!, { title, body, tags, images, mood });
             setEditing(false);
           }}
           onCancel={() => setEditing(false)}

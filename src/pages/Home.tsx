@@ -231,7 +231,9 @@ export default function Home() {
             .trim()
             .slice(0, 240);
           return (
-            <li key={e.id} className="entry-card" onClick={() => navigate(`/entry/${e.id}`)}>
+            <li key={e.id} className="entry-card" onClick={() => navigate(`/entry/${e.id}`)}
+              {...(e.mood ? { "data-theme": e.mood } : {})}
+            >
               <div className="entry-card-header">
                 <strong>{e.title}</strong>
                 <button

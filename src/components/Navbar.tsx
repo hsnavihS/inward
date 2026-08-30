@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // context
 import { useTheme } from "../context/ThemeContext";
 
-const THEME_LABELS = { noir: "noir", sakura: "sakura", blue: "blue", crimson: "crimson" };
+const THEME_LABELS: Record<string, string> = { noir: "noir", blue: "blue", crimson: "crimson", ember: "ember", violet: "violet", forest: "forest" };
 
 interface NavbarProps {
   left?: ReactNode;

@@ -17,8 +17,8 @@ export default function CreateEntry() {
       <Navbar left={<button onClick={() => navigate(-1)}>back</button>} />
       <h1>New Entry</h1>
         <EntryForm
-          onSubmit={({ title, body, tags, images }) => {
-            const entry = addEntry({ title, body, tags, images });
+          onSubmit={({ title, body, tags, images, mood }) => {
+            const entry = addEntry({ title, body, tags, images, mood });
             navigate(`/entry/${entry.id}`);
           }}
           onCancel={() => navigate("/")}

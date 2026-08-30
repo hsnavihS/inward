@@ -3,6 +3,8 @@ import { useState, useRef } from "react";
 
 // types
 import type { Tag } from "../types/Tag";
+import type { Mood } from "../types/Entry";
+import { MOODS, MOOD_LABELS } from "../types/Entry";
 
 // context
 import { useTags } from "../context/TagsContext";
@@ -23,7 +25,8 @@ interface EntryFormProps {
   initialBody?: string;
   initialTags?: Tag[];
   initialImages?: string[];
-  onSubmit: (data: { title: string; body: string; tags: Tag[]; images: string[] }) => void;
+  initialMood?: Mood;
+  onSubmit: (data: { title: string; body: string; tags: Tag[]; images: string[]; mood?: Mood }) => void;
   onCancel: () => void;
   submitLabel?: string;
 }
@@ -33,6 +36,7 @@ export default function EntryForm({
   initialBody = "",
   initialTags = [],
   initialImages = [],
+  initialMood,
   onSubmit,
   onCancel,
   submitLabel = "save",
@@ -43,6 +47,7 @@ export default function EntryForm({
   const [body, setBody] = useState(initialBody);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<Tag[]>(initialTags);
+  const [mood, setMood] = useState<Mood | undefined>(initialMood);
   const [existingImages, setExistingImages] = useState<string[]>(initialImages);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -101,7 +106,7 @@ export default function EntryForm({
       pendingImages.forEach((p) => URL.revokeObjectURL(p.previewUrl));
 
       const allImages = [...existingImages, ...uploadedUrls];
-      onSubmit({ title: title.trim(), body, tags, images: allImages });
+      onSubmit({ title: title.trim(), body, tags, images: allImages, mood });
     } catch (err) {
       setUploadError((err as Error).message);
     } finally {
@@ -214,6 +219,21 @@ export default function EntryForm({
           )}
         </div>
       )}
+      <div className="mood-picker">
+        <span className="mood-label">mood</span>
+        <div className="mood-swatches">
+          {MOODS.map((m) => (
+            <button
+              key={m}
+              type="button"
+              className={`mood-swatch mood-swatch--${m}${mood === m ? " active" : ""}`}
+              title={MOOD_LABELS[m]}
+              onClick={() => setMood(mood === m ? undefined : m)}
+            />
+          ))}
+        </div>
+        {mood && <span className="mood-selected dim">{MOOD_LABELS[mood]}</span>}
+      </div>
       <div className="action-bar">
         <button type="submit" disabled={!title.trim() || !body.trim() || submitting}>
           {submitting ? "saving..." : submitLabel}
