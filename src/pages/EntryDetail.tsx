@@ -35,9 +35,13 @@ export default function EntryDetail() {
   }, [entry?.mood, setTemporaryTheme, restoreTheme]);
 
   const formatTime = (ts: EpochTimeStamp) =>
+    // dd/mm/yy, hh:mm
     new Date(ts).toLocaleString(undefined, {
-      year: "numeric", month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
     });
 
   if (!entry) {
@@ -76,15 +80,15 @@ export default function EntryDetail() {
       <Navbar left={<button onClick={() => navigate(-1)}>back</button>} />
       <h1>{entry.title}</h1>
       <div className="entry-meta" style={{ display: "flex", justifyContent: "space-between" }}>
-        <span>Created: {formatTime(entry.createdAt)}</span>
+        <span>C: {formatTime(entry.createdAt)}</span>
         <span className="dim" style={{ fontSize: "13px" }}>
-          {(() => {
+          W: {(() => {
             const plain = entry.body.replace(/[#*_~`>\[\]()!|-]/g, "").trim();
             return plain ? plain.split(/\s+/).length : 0;
-          })()} words
+          })()}
         </span>
         {entry.updatedAt !== entry.createdAt && (
-          <span>Edited: {formatTime(entry.updatedAt)}</span>
+          <span>E: {formatTime(entry.updatedAt)}</span>
         )}
       </div>
       <hr className="divider" />
