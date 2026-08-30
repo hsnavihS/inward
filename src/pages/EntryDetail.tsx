@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // routing
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
@@ -20,11 +20,17 @@ export default function EntryDetail() {
 
   const entry = getEntry(id!);
 
+  const formatTime = (ts: EpochTimeStamp) =>
+    new Date(ts).toLocaleString(undefined, {
+      year: "numeric", month: "short", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+
   if (!entry) {
     return (
       <div>
         <p className="dim">Entry not found.</p>
-        <Link to="/">{'<'} back</Link>
+        <button onClick={() => navigate("/")}>back</button>
       </div>
     );
   }
@@ -50,28 +56,27 @@ export default function EntryDetail() {
 
   return (
     <div>
-      <Link to="/" className="back-link">{'<'} back</Link>
+      <button className="back-link" onClick={() => navigate("/")}>back</button>
       <h1>{entry.title}</h1>
-      <div className="entry-meta">
-        <span>Created: {new Date(entry.createdAt).toLocaleString()}</span>
+      <div className="entry-meta" style={{ display: "flex", justifyContent: "space-between" }}>
+        <span>Created: {formatTime(entry.createdAt)}</span>
+        <span className="dim" style={{ fontSize: "13px" }}>
+          {entry.body.trim() ? entry.body.trim().split(/\s+/).length : 0} words
+        </span>
         {entry.updatedAt !== entry.createdAt && (
-          <span style={{ marginLeft: "1rem" }}>
-            Edited: {new Date(entry.updatedAt).toLocaleString()}
-          </span>
+          <span>Edited: {formatTime(entry.updatedAt)}</span>
         )}
       </div>
+      <div className="entry-body">{entry.body}</div>
       {entry.tags.length > 0 && (
-        <div style={{ marginBottom: "12px" }}>
+        <div style={{ margin: "12px 0px" }}>
           {entry.tags.map((t) => (
             <span key={t.name} className="tag">#{t.name}</span>
           ))}
         </div>
       )}
-      <div className="entry-body">{entry.body}</div>
-      <p className="dim" style={{ fontSize: "13px", marginTop: "8px" }}>
-        {entry.body.trim() ? entry.body.trim().split(/\s+/).length : 0} words
-      </p>
-      <div className="action-bar">
+      <hr className="divider" />
+      <div className="action-bar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <button onClick={() => setEditing(true)}>edit</button>
         <button className="btn-danger" onClick={() => setShowDeleteModal(true)}>delete</button>
       </div>

@@ -105,8 +105,8 @@ export default function EntryForm({
         )}
       </div>
       <div className="action-bar">
-        <button type="submit" disabled={!title.trim()}>{submitLabel}</button>
-        <button type="button" onClick={onCancel}>cancel</button>
+        <button type="submit" disabled={!title.trim() || !body.trim()}>{submitLabel}</button>
+        <button type="button" className="btn-danger" onClick={onCancel}>cancel</button>
       </div>
     </form>
   );

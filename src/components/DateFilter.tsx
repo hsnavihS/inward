@@ -7,8 +7,8 @@ interface DateFilterProps {
 }
 
 const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "jan", "feb", "mar", "apr", "may", "jun",
+  "jul", "aug", "sep", "oct", "nov", "dec",
 ];
 
 export default function DateFilter({ years, selectedYear, selectedMonth, onYearChange, onMonthChange }: DateFilterProps) {
@@ -23,7 +23,7 @@ export default function DateFilter({ years, selectedYear, selectedMonth, onYearC
       <select value={selectedMonth} onChange={(e) => onMonthChange(e.target.value)}>
         <option value="">all months</option>
         {MONTHS.map((m, i) => (
-          <option key={m} value={i}>{m}</option>
+          <option key={m} value={i}>{m.toLowerCase()}</option>
         ))}
       </select>
     </div>

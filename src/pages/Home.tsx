@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 
 // routing
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
@@ -19,6 +19,7 @@ import FilterPanel from "../components/FilterPanel";
 export default function Home() {
   const { entries, loading, deleteEntry } = useEntries();
   const { tags } = useTags();
+  const navigate = useNavigate();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // filters
@@ -102,7 +103,7 @@ export default function Home() {
     return (
       <div className="header">
         <h1>Inward</h1>
-        <Link to="/create">[ + new ]</Link>
+        <button onClick={() => navigate("/create")}>new</button>
       </div>
     );
   }
@@ -117,7 +118,11 @@ export default function Home() {
             className={`filter-toggle${filtersOpen ? " active" : ""}`}
             onClick={() => setFiltersOpen(!filtersOpen)}
             title="Toggle filters"
-          >▽</button>
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+          </button>
         </div>
 
         {filtersOpen && (
@@ -148,17 +153,22 @@ export default function Home() {
     return (
       <ul>
         {paged.map((e) => (
-          <li key={e.id} className="entry-row">
-            <Link to={`/entry/${e.id}`} style={{ borderBottom: "none", flex: 1 }}>
+          <li key={e.id} className="entry-row" onClick={() => navigate(`/entry/${e.id}`)} style={{ cursor: "pointer" }}>
+            <div style={{ flex: 1 }}>
               <strong>{e.title}</strong>
               <span className="dim" style={{ marginLeft: "1rem", fontSize: "13px" }}>
                 {new Date(e.createdAt).toLocaleDateString()}
               </span>
-            </Link>
+            </div>
             <button
               className="btn-danger btn-sm"
-              onClick={() => setDeleteId(e.id)}
-            >×</button>
+              onClick={(ev) => { ev.stopPropagation(); setDeleteId(e.id); }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
             {e.tags.length > 0 && (
               <div style={{ marginTop: "6px", width: "100%" }}>
                 {e.tags.map((t) => (
@@ -177,11 +187,11 @@ export default function Home() {
     return (
       <div className="pagination">
         <button onClick={() => setPage(safePage - 1)} disabled={safePage === 1}>
-          {"[ < previous ]"}
+          {"previous"}
         </button>
         <span>page {safePage} of {totalPages}</span>
         <button onClick={() => setPage(safePage + 1)} disabled={safePage === totalPages}>
-          {"[ next > ]"}
+          {"next"}
         </button>
       </div>
     );

@@ -176,7 +176,8 @@ textarea {
 
 /* ── Buttons ──────────────────────────────────────── */
 
-button {
+button,
+.btn {
   font-family: var(--font-body);
   font-size: 14px;
   padding: 8px 18px;
@@ -185,12 +186,14 @@ button {
   border: 1px solid var(--accent-dim);
   border-radius: 2px;
   cursor: pointer;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 1.5px;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
-button:hover:not(:disabled) {
+button:hover:not(:disabled),
+.btn:hover {
   background: var(--accent-bg);
   border-color: var(--accent);
   box-shadow: var(--glow);
@@ -270,10 +273,12 @@ form button[type="submit"]:hover:not(:disabled) {
 
 .filter-toggle {
   padding: 8px 12px;
-  font-size: 16px;
   min-width: auto;
   color: var(--text);
   border-color: var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filter-toggle.active {
@@ -358,7 +363,7 @@ ul {
   margin: 0 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
 }
 
 li {
@@ -391,24 +396,7 @@ li:hover {
 }
 
 .pagination button {
-  background: none;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  padding: 0;
   min-width: auto;
-}
-
-.pagination button:hover:not(:disabled) {
-  text-shadow: var(--glow);
-  box-shadow: none;
-  background: none;
-  border: none;
-}
-
-.pagination button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
 }
 
 li strong {
@@ -418,10 +406,13 @@ li strong {
 }
 
 .btn-sm {
-  padding: 2px 8px;
-  font-size: 16px;
+  padding: 4px 8px;
+  font-size: 14px;
   line-height: 1;
   min-width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Tags ─────────────────────────────────────────── */
@@ -506,8 +497,6 @@ li strong {
 .back-link {
   display: inline-block;
   margin-bottom: 8px;
-  font-size: 14px;
-  letter-spacing: 1px;
 }
 
 /* ── Entry detail body ────────────────────────────── */
@@ -516,7 +505,7 @@ li strong {
   white-space: pre-wrap;
   line-height: 1.7;
   color: var(--text-h);
-  padding: 16px 0;
+  padding-top: 16px;
   border-top: 1px solid var(--border);
 }
 
@@ -645,6 +634,7 @@ li strong {
   display: flex;
   gap: 8px;
   margin-top: 16px;
+  justify-content: space-between;
 }
 
 /* ── Scrollbar ────────────────────────────────────── */
