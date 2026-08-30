@@ -128,6 +128,25 @@ a:hover {
   border-color: var(--accent);
 }
 
+/* ── Full-height page layout ──────────────────────── */
+
+.page-full {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.page-full form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.page-full textarea {
+  flex: 1;
+  resize: vertical;
+}
+
 /* ── Inputs ───────────────────────────────────────── */
 
 input[type="text"],
@@ -497,16 +516,137 @@ li strong {
 .back-link {
   display: inline-block;
   margin-bottom: 8px;
+  align-self: flex-start;
 }
 
 /* ── Entry detail body ────────────────────────────── */
 
 .entry-body {
-  white-space: pre-wrap;
   line-height: 1.7;
   color: var(--text-h);
-  padding-top: 16px;
+}
+
+/* ── Markdown body ────────────────────────────────── */
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  color: var(--text-h);
+  text-shadow: 0 0 6px rgba(51, 255, 153, 0.2);
+  margin: 16px 0 8px;
+}
+
+.markdown-body h1 {
+  font-size: 24px;
+}
+
+.markdown-body h2 {
+  font-size: 20px;
+}
+
+.markdown-body h3 {
+  font-size: 17px;
+}
+
+.markdown-body p {
+  margin: 8px 0;
+}
+
+.markdown-body a {
+  color: var(--accent);
+  border-bottom: 1px dashed var(--accent-dim);
+}
+
+.markdown-body code {
+  font-family: var(--font-mono);
+  background: var(--bg-surface);
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.markdown-body pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid var(--accent-dim);
+  margin: 12px 0;
+  padding: 4px 16px;
+  color: var(--text);
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+.markdown-body li {
+  padding: 2px 0;
+  background: none;
+  border: none;
+}
+
+.markdown-body li:hover {
+  background: none;
+  border-color: transparent;
+}
+
+.markdown-body hr {
+  border: none;
   border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.markdown-body strong {
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.markdown-body em {
+  font-style: italic;
+  color: var(--text);
+}
+
+/* ── Editor tabs ──────────────────────────────────── */
+
+.editor-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.editor-tabs button {
+  padding: 4px 14px;
+  font-size: 13px;
+  min-width: auto;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.editor-tabs button.active {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.preview-box {
+  min-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 14px;
 }
 
 /* ── Entry meta ───────────────────────────────────── */

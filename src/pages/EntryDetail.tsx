@@ -10,6 +10,7 @@ import { useEntries } from "../context/EntriesContext";
 // components
 import EntryForm from "../components/EntryForm";
 import ConfirmModal from "../components/ConfirmModal";
+import ReactMarkdown from "react-markdown";
 
 export default function EntryDetail() {
   const { id } = useParams<{ id: string }>();
@@ -37,7 +38,8 @@ export default function EntryDetail() {
 
   if (editing) {
     return (
-      <div>
+      <div className="page-full">
+        <button className="back-link" onClick={() => setEditing(false)}>back</button>
         <h1>Edit Entry</h1>
         <EntryForm
           initialTitle={entry.title}
@@ -61,13 +63,19 @@ export default function EntryDetail() {
       <div className="entry-meta" style={{ display: "flex", justifyContent: "space-between" }}>
         <span>Created: {formatTime(entry.createdAt)}</span>
         <span className="dim" style={{ fontSize: "13px" }}>
-          {entry.body.trim() ? entry.body.trim().split(/\s+/).length : 0} words
+          {(() => {
+            const plain = entry.body.replace(/[#*_~`>\[\]()!|-]/g, "").trim();
+            return plain ? plain.split(/\s+/).length : 0;
+          })()} words
         </span>
         {entry.updatedAt !== entry.createdAt && (
           <span>Edited: {formatTime(entry.updatedAt)}</span>
         )}
       </div>
-      <div className="entry-body">{entry.body}</div>
+      <hr className="divider" />
+      <div className="entry-body markdown-body">
+        <ReactMarkdown>{entry.body}</ReactMarkdown>
+      </div>
       {entry.tags.length > 0 && (
         <div style={{ margin: "12px 0px" }}>
           {entry.tags.map((t) => (

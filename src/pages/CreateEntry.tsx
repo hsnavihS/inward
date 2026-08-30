@@ -12,15 +12,18 @@ export default function CreateEntry() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>New Entry</h1>
-      <EntryForm
-        onSubmit={({ title, body, tags }) => {
-          const entry = addEntry({ title, body, tags, imageIds: [] });
-          navigate(`/entry/${entry.id}`);
-        }}
-        onCancel={() => navigate("/")}
-      />
-    </div>
+    <>
+      <button className="back-link" onClick={() => navigate(-1)}>back</button>
+      <div className="page-full">
+        <h1>New Entry</h1>
+        <EntryForm
+          onSubmit={({ title, body, tags }) => {
+            const entry = addEntry({ title, body, tags, imageIds: [] });
+            navigate(`/entry/${entry.id}`);
+          }}
+          onCancel={() => navigate("/")}
+        />
+      </div>
+    </>
   );
 }

@@ -7,6 +7,9 @@ import type { Tag } from "../types/Tag";
 // context
 import { useTags } from "../context/TagsContext";
 
+// components
+import ReactMarkdown from "react-markdown";
+
 interface EntryFormProps {
   initialTitle?: string;
   initialBody?: string;
@@ -30,6 +33,7 @@ export default function EntryForm({
   const [body, setBody] = useState(initialBody);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<Tag[]>(initialTags);
+  const [preview, setPreview] = useState(false);
 
   const suggestions = tagInput.trim()
     ? searchTags(tagInput).filter((t) => !tags.some((s) => s.name === t.name))
@@ -59,12 +63,26 @@ export default function EntryForm({
         onChange={(e) => setTitle(e.target.value)}
         autoFocus
       />
-      <textarea
-        placeholder="write in markdown..."
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        rows={12}
-      />
+      <div className="editor-tabs">
+        <button type="button" className={preview ? "" : "active"} onClick={() => setPreview(false)}>write</button>
+        <button type="button" className={preview ? "active" : ""} onClick={() => setPreview(true)}>preview</button>
+      </div>
+      {preview ? (
+        <div className="entry-body markdown-body preview-box">
+          {body.trim() ? (
+            <ReactMarkdown>{body}</ReactMarkdown>
+          ) : (
+            <p className="dim">Nothing to preview</p>
+          )}
+        </div>
+      ) : (
+        <textarea
+          placeholder="write in markdown..."
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={12}
+        />
+      )}
       <div>
         <div className="tag-input-row">
           <input
