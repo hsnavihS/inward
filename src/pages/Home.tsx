@@ -43,7 +43,7 @@ export default function Home() {
 
   // pagination — read from query param, default to 1
   const page = Number(searchParams.get("page")) || 1;
-  const ENTRIES_PER_PAGE = 10;
+  const ENTRIES_PER_PAGE = 5;
 
   const setPage = useCallback((p: number) => {
     if (p <= 1) {
@@ -222,32 +222,43 @@ export default function Home() {
     }
     return (
       <ul>
-        {paged.map((e) => (
-          <li key={e.id} className="entry-row" onClick={() => navigate(`/entry/${e.id}`)} style={{ cursor: "pointer" }}>
-            <div style={{ flex: 1 }}>
-              <strong>{e.title}</strong>
-              <span className="dim" style={{ marginLeft: "1rem", fontSize: "13px" }}>
-                {new Date(e.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <button
-              className="btn-danger btn-sm"
-              onClick={(ev) => { ev.stopPropagation(); setDeleteId(e.id); }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-            </button>
-            {e.tags.length > 0 && (
-              <div style={{ marginTop: "6px", width: "100%" }}>
-                {e.tags.map((t) => (
-                  <span key={t.name} className="tag">#{t.name}</span>
-                ))}
+        {paged.map((e) => {
+          const excerpt = e.body
+            .replace(/[#*_~`>\[\]()!|\-]/g, "")
+            .trim()
+            .slice(0, 240);
+          return (
+            <li key={e.id} className="entry-card" onClick={() => navigate(`/entry/${e.id}`)}>
+              <div className="entry-card-header">
+                <strong>{e.title}</strong>
+                <button
+                  className="btn-danger btn-sm"
+                  onClick={(ev) => { ev.stopPropagation(); setDeleteId(e.id); }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </button>
               </div>
-            )}
-          </li>
-        ))}
+              {excerpt && (
+                <p className="entry-card-excerpt">
+                  {excerpt}{e.body.length > 240 ? "…" : ""}
+                </p>
+              )}
+              <div className="entry-card-footer">
+                <div className="entry-card-tags">
+                  {e.tags.map((t) => (
+                    <span key={t.name} className="tag">#{t.name}</span>
+                  ))}
+                </div>
+                <span className="dim" style={{ fontSize: "13px" }}>
+                  {new Date(e.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   }
