@@ -5,7 +5,7 @@ export interface Entry {
     title: string,
     body: string,
     tags: Tag[],
-    imageIds: string[],
+    images: string[],
     createdAt: EpochTimeStamp,
     updatedAt: EpochTimeStamp,
 }

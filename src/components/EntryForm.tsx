@@ -1,5 +1,5 @@
 // react
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 // types
 import type { Tag } from "../types/Tag";
@@ -10,11 +10,20 @@ import { useTags } from "../context/TagsContext";
 // components
 import ReactMarkdown from "react-markdown";
 
+// utilities
+import { uploadImage, isCloudinaryConfigured } from "../cloudinary";
+
+interface PendingImage {
+  file: File;
+  previewUrl: string;
+}
+
 interface EntryFormProps {
   initialTitle?: string;
   initialBody?: string;
   initialTags?: Tag[];
-  onSubmit: (data: { title: string; body: string; tags: Tag[] }) => void;
+  initialImages?: string[];
+  onSubmit: (data: { title: string; body: string; tags: Tag[]; images: string[] }) => void;
   onCancel: () => void;
   submitLabel?: string;
 }
@@ -23,6 +32,7 @@ export default function EntryForm({
   initialTitle = "",
   initialBody = "",
   initialTags = [],
+  initialImages = [],
   onSubmit,
   onCancel,
   submitLabel = "save",
@@ -33,7 +43,14 @@ export default function EntryForm({
   const [body, setBody] = useState(initialBody);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<Tag[]>(initialTags);
+  const [existingImages, setExistingImages] = useState<string[]>(initialImages);
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [preview, setPreview] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const totalImages = existingImages.length + pendingImages.length;
 
   const suggestions = tagInput.trim()
     ? searchTags(tagInput).filter((t) => !tags.some((s) => s.name === t.name))
@@ -48,10 +65,48 @@ export default function EntryForm({
 
   const removeTag = (name: string) => setTags(tags.filter((t) => t.name !== name));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || totalImages >= 3) return;
+    const previewUrl = URL.createObjectURL(file);
+    setPendingImages([...pendingImages, { file, previewUrl }]);
+    e.target.value = "";
+  };
+
+  const removeExistingImage = (index: number) =>
+    setExistingImages(existingImages.filter((_, i) => i !== index));
+
+  const removePendingImage = (index: number) => {
+    const removed = pendingImages[index];
+    URL.revokeObjectURL(removed.previewUrl);
+    setPendingImages(pendingImages.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onSubmit({ title: title.trim(), body, tags });
+
+    setSubmitting(true);
+    setUploadError("");
+
+    try {
+      // Upload pending files now
+      const uploadedUrls: string[] = [];
+      for (const pending of pendingImages) {
+        const url = await uploadImage(pending.file);
+        uploadedUrls.push(url);
+      }
+
+      // Clean up preview URLs
+      pendingImages.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+
+      const allImages = [...existingImages, ...uploadedUrls];
+      onSubmit({ title: title.trim(), body, tags, images: allImages });
+    } catch (err) {
+      setUploadError((err as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -122,9 +177,48 @@ export default function EntryForm({
           </div>
         )}
       </div>
+      {isCloudinaryConfigured && (
+        <div className="image-attach">
+          <div className="tag-input-row">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={totalImages >= 3 || submitting}
+            >
+              {`attach image (${totalImages}/3)`}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileSelect}
+            />
+          </div>
+          {uploadError && <p className="error">{uploadError}</p>}
+          {(existingImages.length > 0 || pendingImages.length > 0) && (
+            <div className="image-preview-strip">
+              {existingImages.map((url, i) => (
+                <div key={url} className="image-preview-thumb">
+                  <img src={url} alt={`attachment ${i + 1}`} />
+                  <button type="button" className="btn-danger btn-sm" onClick={() => removeExistingImage(i)}>×</button>
+                </div>
+              ))}
+              {pendingImages.map((p, i) => (
+                <div key={p.previewUrl} className="image-preview-thumb">
+                  <img src={p.previewUrl} alt={`pending ${i + 1}`} />
+                  <button type="button" className="btn-danger btn-sm" onClick={() => removePendingImage(i)}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       <div className="action-bar">
-        <button type="submit" disabled={!title.trim() || !body.trim()}>{submitLabel}</button>
-        <button type="button" className="btn-danger" onClick={onCancel}>cancel</button>
+        <button type="submit" disabled={!title.trim() || !body.trim() || submitting}>
+          {submitting ? "saving..." : submitLabel}
+        </button>
+        <button type="button" className="btn-danger" onClick={onCancel} disabled={submitting}>cancel</button>
       </div>
     </form>
   );

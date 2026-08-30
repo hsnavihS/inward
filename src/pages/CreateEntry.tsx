@@ -17,8 +17,8 @@ export default function CreateEntry() {
       <div className="page-full">
         <h1>New Entry</h1>
         <EntryForm
-          onSubmit={({ title, body, tags }) => {
-            const entry = addEntry({ title, body, tags, imageIds: [] });
+          onSubmit={({ title, body, tags, images }) => {
+            const entry = addEntry({ title, body, tags, images });
             navigate(`/entry/${entry.id}`);
           }}
           onCancel={() => navigate("/")}

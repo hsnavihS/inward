@@ -10,6 +10,7 @@ import { useEntries } from "../context/EntriesContext";
 // components
 import EntryForm from "../components/EntryForm";
 import ConfirmModal from "../components/ConfirmModal";
+import ImagePreviewModal from "../components/ImagePreviewModal";
 import ReactMarkdown from "react-markdown";
 
 export default function EntryDetail() {
@@ -18,6 +19,7 @@ export default function EntryDetail() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const entry = getEntry(id!);
 
@@ -45,9 +47,10 @@ export default function EntryDetail() {
           initialTitle={entry.title}
           initialBody={entry.body}
           initialTags={entry.tags}
+          initialImages={entry.images}
           submitLabel="update"
-          onSubmit={({ title, body, tags }) => {
-            updateEntry(id!, { title, body, tags });
+          onSubmit={({ title, body, tags, images }) => {
+            updateEntry(id!, { title, body, tags, images });
             setEditing(false);
           }}
           onCancel={() => setEditing(false)}
@@ -76,6 +79,15 @@ export default function EntryDetail() {
       <div className="entry-body markdown-body">
         <ReactMarkdown>{entry.body}</ReactMarkdown>
       </div>
+      {entry.images && entry.images.length > 0 && (
+        <div className="image-gallery-row">
+          {entry.images.map((url, i) => (
+            <div key={url} className="image-gallery-item" onClick={() => setPreviewImage(url)}>
+              <img src={url} alt={`attachment ${i + 1}`} />
+            </div>
+          ))}
+        </div>
+      )}
       {entry.tags.length > 0 && (
         <div style={{ margin: "12px 0px" }}>
           {entry.tags.map((t) => (
@@ -93,6 +105,12 @@ export default function EntryDetail() {
           message="Delete this entry? This cannot be undone."
           onConfirm={() => { deleteEntry(id!); navigate("/"); }}
           onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
+      {previewImage && (
+        <ImagePreviewModal
+          src={previewImage}
+          onClose={() => setPreviewImage(null)}
         />
       )}
     </div>
