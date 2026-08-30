@@ -206,6 +206,13 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid var(--accent-dim);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(51, 255, 153, 0.15);
+}
+
 button.btn-danger {
   color: var(--danger);
   border-color: var(--danger-dim);
@@ -372,6 +379,36 @@ li.entry-row {
 li:hover {
   border-color: var(--accent-dim);
   background: rgba(51, 255, 153, 0.03);
+}
+
+/* ── Pagination ───────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  min-width: auto;
+}
+
+.pagination button:hover:not(:disabled) {
+  text-shadow: var(--glow);
+  box-shadow: none;
+  background: none;
+  border: none;
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 li strong {
