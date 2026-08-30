@@ -22,6 +22,7 @@ interface EntriesContext {
   getEntry: (id: string) => Entry | undefined;
   updateEntry: (id: string, input: Partial<Omit<Entry, "id" | "createdAt" | "updatedAt">>) => void;
   deleteEntry: (id: string) => void;
+  removeTagFromAll: (tagName: string) => void;
   replaceEntries: (entries: Entry[]) => void;
 }
 
@@ -104,12 +105,29 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
     );
   }, [entries, key, vaultId]);
 
+  const removeTagFromAll = useCallback((tagName: string) => {
+    const updated = entries.map((e) =>
+      e.tags.some((t) => t.name === tagName)
+        ? { ...e, tags: e.tags.filter((t) => t.name !== tagName), updatedAt: Date.now() }
+        : e
+    );
+    persistAndSet(updated);
+    // Sync affected entries
+    for (const entry of updated) {
+      if (!entries.find((e) => e.id === entry.id && e.updatedAt === entry.updatedAt)) {
+        pushEntry(vaultId, entry, key).catch((err) =>
+          console.error("Failed to sync entry:", err)
+        );
+      }
+    }
+  }, [entries, key, vaultId]);
+
   const replaceEntries = useCallback((newEntries: Entry[]) => {
     setEntries(newEntries);
   }, []);
 
   return (
-    <Ctx.Provider value={{ entries, loading, error, addEntry, getEntry, updateEntry, deleteEntry, replaceEntries }}>
+    <Ctx.Provider value={{ entries, loading, error, addEntry, getEntry, updateEntry, deleteEntry, removeTagFromAll, replaceEntries }}>
       {children}
     </Ctx.Provider>
   );

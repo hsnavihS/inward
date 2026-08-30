@@ -15,6 +15,7 @@ import { useDebounce } from "../hooks/useDebounce";
 // components
 import Navbar, { DropdownMenu } from "../components/Navbar";
 import ConfirmModal from "../components/ConfirmModal";
+import TagManagerModal from "../components/TagManagerModal";
 import SearchBar from "../components/SearchBar";
 import FilterPanel from "../components/FilterPanel";
 
@@ -31,6 +32,7 @@ export default function Home() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [importError, setImportError] = useState("");
   const [syncing, setSyncing] = useState(false);
+  const [showTagManager, setShowTagManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // filters
@@ -159,12 +161,13 @@ export default function Home() {
     return (
       <Navbar left={
         <>
-          <DropdownMenu label="backup">
+          <DropdownMenu label="more">
             <button onClick={handleExport}>export</button>
             <button onClick={() => fileInputRef.current?.click()}>import</button>
             <button onClick={handleSyncAll} disabled={syncing}>
               {syncing ? "syncing..." : "sync"}
             </button>
+            <button onClick={() => setShowTagManager(true)}>tags</button>
           </DropdownMenu>
           <input
             ref={fileInputRef}
@@ -251,6 +254,11 @@ export default function Home() {
                   {e.tags.map((t) => (
                     <span key={t.name} className="tag">#{t.name}</span>
                   ))}
+                  {e.images && e.images.length > 0 && (
+                    <svg className="attachment-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                    </svg>
+                  )}
                 </div>
                 <span className="dim" style={{ fontSize: "13px" }}>
                   {new Date(e.createdAt).toLocaleDateString()}
@@ -292,6 +300,9 @@ export default function Home() {
           onConfirm={() => { deleteEntry(deleteId); setDeleteId(null); }}
           onCancel={() => setDeleteId(null)}
         />
+      )}
+      {showTagManager && (
+        <TagManagerModal onClose={() => setShowTagManager(false)} />
       )}
     </div>
   );

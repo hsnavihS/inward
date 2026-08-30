@@ -511,6 +511,11 @@ li.entry-card {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.attachment-icon {
+  opacity: 0.5;
 }
 
 li:hover {
@@ -1029,6 +1034,53 @@ li strong {
   display: flex;
   gap: 12px;
   justify-content: center;
+}
+
+/* ── Tag Manager Modal ────────────────────────────── */
+
+.tag-manager-modal {
+  width: 340px;
+  text-align: left;
+}
+
+.tag-manager-modal h3 {
+  margin: 0 0 12px 0;
+  color: var(--text-h);
+  text-align: center;
+}
+
+.tag-manager-list {
+  list-style: none;
+  padding: 0 12px 0 0;
+  margin: 12px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tag-manager-list li {
+  background: none;
+  border: none;
+  padding: 6px 0;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tag-manager-list li:hover {
+  background: none;
+}
+
+.tag-manager-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag-manager-item span {
+  color: var(--text);
+}
+
+.tag-manager-item .btn-sm {
+  padding: 2px 8px;
 }
 
 /* ── Image attach (EntryForm) ─────────────────────── */

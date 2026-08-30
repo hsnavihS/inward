@@ -17,6 +17,7 @@ const TAGS_KEY = "tags";
 interface TagsContext {
   tags: Tag[];
   addTag: (name: string) => Tag | null;
+  deleteTag: (name: string) => void;
   searchTags: (query: string) => Tag[];
   replaceTags: (tags: Tag[]) => void;
 }
@@ -77,6 +78,10 @@ export function TagsProvider({ children }: { children: ReactNode }) {
     return tag;
   }, [tags, key, vaultId]);
 
+  const deleteTag = useCallback((name: string) => {
+    persistTags(tags.filter((t) => t.name !== name));
+  }, [tags, key, vaultId]);
+
   const searchTags = useCallback((query: string): Tag[] => {
     const q = query.trim().toLowerCase();
     if (!q) return tags;
@@ -88,7 +93,7 @@ export function TagsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ tags, addTag, searchTags, replaceTags }}>
+    <Ctx.Provider value={{ tags, addTag, deleteTag, searchTags, replaceTags }}>
       {children}
     </Ctx.Provider>
   );
