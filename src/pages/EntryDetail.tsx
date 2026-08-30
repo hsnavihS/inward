@@ -30,7 +30,7 @@ export default function EntryDetail() {
     return (
       <div>
         <p className="dim">Entry not found.</p>
-        <button onClick={() => navigate("/")}>back</button>
+        <button onClick={() => navigate(-1)}>back</button>
       </div>
     );
   }
@@ -56,7 +56,7 @@ export default function EntryDetail() {
 
   return (
     <div>
-      <button className="back-link" onClick={() => navigate("/")}>back</button>
+      <button className="back-link" onClick={() => navigate(-1)}>back</button>
       <h1>{entry.title}</h1>
       <div className="entry-meta" style={{ display: "flex", justifyContent: "space-between" }}>
         <span>Created: {formatTime(entry.createdAt)}</span>

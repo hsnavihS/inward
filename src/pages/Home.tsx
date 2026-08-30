@@ -1,8 +1,8 @@
 // react
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 // routing
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 // context
 import { useEntries } from "../context/EntriesContext";
@@ -20,6 +20,7 @@ export default function Home() {
   const { entries, loading, deleteEntry } = useEntries();
   const { tags } = useTags();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // filters
@@ -30,9 +31,18 @@ export default function Home() {
   const [month, setMonth] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // pagination
-  const [page, setPage] = useState(1);
+  // pagination — read from query param, default to 1
+  const page = Number(searchParams.get("page")) || 1;
   const ENTRIES_PER_PAGE = 5;
+
+  const setPage = useCallback((p: number) => {
+    if (p <= 1) {
+      searchParams.delete("page");
+    } else {
+      searchParams.set("page", String(p));
+    }
+    setSearchParams(searchParams, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const years = useMemo(() => {
     const set = new Set(entries.map((e) => new Date(e.createdAt).getFullYear()));
