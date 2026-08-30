@@ -1,5 +1,5 @@
 // react
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 
 // routing
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEntries } from "../context/EntriesContext";
 import { useTags } from "../context/TagsContext";
 import { useTheme } from "../context/ThemeContext";
+import { useVault } from "../context/VaultContext";
 
 // hooks
 import { useDebounce } from "../hooks/useDebounce";
@@ -17,15 +18,23 @@ import ConfirmModal from "../components/ConfirmModal";
 import SearchBar from "../components/SearchBar";
 import FilterPanel from "../components/FilterPanel";
 
+// utilities
+import { exportBackup, importBackup } from "../backup";
+import { pushAllEntries, pushTags } from "../sync";
+
 export default function Home() {
   const THEME_LABELS = { crt: "crt", sakura: "sakura", blue: "blue", crimson: "crimson" };
 
-  const { entries, loading, deleteEntry } = useEntries();
-  const { tags } = useTags();
+  const { entries, loading, deleteEntry, replaceEntries } = useEntries();
+  const { tags, replaceTags } = useTags();
   const { theme, cycleTheme } = useTheme();
+  const { key, vaultId } = useVault();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [importError, setImportError] = useState("");
+  const [syncing, setSyncing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // filters
   const [search, setSearch] = useState("");
@@ -104,21 +113,68 @@ export default function Home() {
     setPage(1);
   };
 
+  const handleExport = async () => {
+    try {
+      await exportBackup(key, vaultId);
+    } catch (err) {
+      console.error("Export failed:", err);
+    }
+  };
+
+  const handleSyncAll = async () => {
+    setSyncing(true);
+    try {
+      await pushAllEntries(vaultId, entries, key);
+      await pushTags(vaultId, tags, key);
+    } catch (err) {
+      console.error("Sync failed:", err);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportError("");
+    try {
+      const result = await importBackup(file, key, vaultId);
+      replaceEntries(result.entries);
+      replaceTags(result.tags);
+    } catch (err) {
+      setImportError((err as Error).message);
+    }
+    // Reset input so the same file can be re-selected
+    e.target.value = "";
+  };
+
   if (loading) {
     return (
       <div>
         {renderHeader()}
+        {importError && <p className="error">{importError}</p>}
         <p className="empty-state">Loading...</p>
       </div>
     );
   }
-
 
   function renderHeader() {
     return (
       <div className="header">
         <h1>Inward</h1>
         <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={handleExport} title="Export backup">export</button>
+          <button onClick={() => fileInputRef.current?.click()} title="Import backup">import</button>
+          <button onClick={handleSyncAll} disabled={syncing} title="Sync all to cloud">
+            {syncing ? "syncing..." : "sync"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".inw"
+            style={{ display: "none" }}
+            onChange={handleImport}
+          />
           <button onClick={cycleTheme} title="Switch theme">
             {`theme: ${THEME_LABELS[theme]}`}
           </button>
@@ -220,6 +276,7 @@ export default function Home() {
   return (
     <div>
       {renderHeader()}
+      {importError && <p className="error">{importError}</p>}
       {renderSearchAndFilters()}
       {renderEntryList()}
       {renderPagination()}

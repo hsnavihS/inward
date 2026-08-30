@@ -22,6 +22,7 @@ interface EntriesContext {
   getEntry: (id: string) => Entry | undefined;
   updateEntry: (id: string, input: Partial<Omit<Entry, "id" | "createdAt" | "updatedAt">>) => void;
   deleteEntry: (id: string) => void;
+  replaceEntries: (entries: Entry[]) => void;
 }
 
 const Ctx = createContext<EntriesContext | null>(null);
@@ -103,8 +104,12 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
     );
   }, [entries, key, vaultId]);
 
+  const replaceEntries = useCallback((newEntries: Entry[]) => {
+    setEntries(newEntries);
+  }, []);
+
   return (
-    <Ctx.Provider value={{ entries, loading, error, addEntry, getEntry, updateEntry, deleteEntry }}>
+    <Ctx.Provider value={{ entries, loading, error, addEntry, getEntry, updateEntry, deleteEntry, replaceEntries }}>
       {children}
     </Ctx.Provider>
   );

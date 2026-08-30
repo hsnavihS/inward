@@ -58,6 +58,33 @@ export async function deleteRemoteEntry(
   await deleteDoc(doc(db, "vaults", vaultId, "entries", entryId));
 }
 
+/** Push a single entry only if it doesn't already exist in Firestore */
+export async function pushEntryIfMissing(
+  vaultId: string,
+  entry: { id: string; updatedAt: number },
+  key: CryptoKey
+): Promise<void> {
+  if (!isFirebaseConfigured || !db) return;
+
+  const snap = await getDoc(doc(db, "vaults", vaultId, "entries", entry.id));
+  if (snap.exists()) return;
+
+  await pushEntry(vaultId, entry, key);
+}
+
+/** Push all entries to Firestore, skipping ones that already exist */
+export async function pushAllEntries(
+  vaultId: string,
+  entries: { id: string; updatedAt: number }[],
+  key: CryptoKey
+): Promise<void> {
+  if (!isFirebaseConfigured || !db) return;
+
+  for (const entry of entries) {
+    await pushEntryIfMissing(vaultId, entry, key);
+  }
+}
+
 // -- Tags --
 
 /** Push encrypted tags to Firestore */

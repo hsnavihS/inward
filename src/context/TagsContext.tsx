@@ -18,6 +18,7 @@ interface TagsContext {
   tags: Tag[];
   addTag: (name: string) => Tag | null;
   searchTags: (query: string) => Tag[];
+  replaceTags: (tags: Tag[]) => void;
 }
 
 const Ctx = createContext<TagsContext | null>(null);
@@ -82,8 +83,12 @@ export function TagsProvider({ children }: { children: ReactNode }) {
     return tags.filter((t) => t.name.includes(q));
   }, [tags]);
 
+  const replaceTags = useCallback((newTags: Tag[]) => {
+    setTags(newTags);
+  }, []);
+
   return (
-    <Ctx.Provider value={{ tags, addTag, searchTags }}>
+    <Ctx.Provider value={{ tags, addTag, searchTags, replaceTags }}>
       {children}
     </Ctx.Provider>
   );
