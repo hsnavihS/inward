@@ -7,13 +7,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 // context
 import { useEntries } from "../context/EntriesContext";
 import { useTags } from "../context/TagsContext";
-import { useTheme } from "../context/ThemeContext";
 import { useVault } from "../context/VaultContext";
 
 // hooks
 import { useDebounce } from "../hooks/useDebounce";
 
 // components
+import Navbar, { DropdownMenu } from "../components/Navbar";
 import ConfirmModal from "../components/ConfirmModal";
 import SearchBar from "../components/SearchBar";
 import FilterPanel from "../components/FilterPanel";
@@ -23,11 +23,8 @@ import { exportBackup, importBackup } from "../backup";
 import { pushAllEntries, pushTags } from "../sync";
 
 export default function Home() {
-  const THEME_LABELS = { noir: "noir", sakura: "sakura", blue: "blue", crimson: "crimson" };
-
   const { entries, loading, deleteEntry, replaceEntries } = useEntries();
   const { tags, replaceTags } = useTags();
-  const { theme, cycleTheme } = useTheme();
   const { key, vaultId } = useVault();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -160,14 +157,15 @@ export default function Home() {
 
   function renderHeader() {
     return (
-      <div className="header">
-        <h1>Inward</h1>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button onClick={handleExport} title="Export backup">export</button>
-          <button onClick={() => fileInputRef.current?.click()} title="Import backup">import</button>
-          <button onClick={handleSyncAll} disabled={syncing} title="Sync all to cloud">
-            {syncing ? "syncing..." : "sync"}
-          </button>
+      <Navbar left={
+        <>
+          <DropdownMenu label="backup">
+            <button onClick={handleExport}>export</button>
+            <button onClick={() => fileInputRef.current?.click()}>import</button>
+            <button onClick={handleSyncAll} disabled={syncing}>
+              {syncing ? "syncing..." : "sync"}
+            </button>
+          </DropdownMenu>
           <input
             ref={fileInputRef}
             type="file"
@@ -175,12 +173,8 @@ export default function Home() {
             style={{ display: "none" }}
             onChange={handleImport}
           />
-          <button onClick={cycleTheme} title="Switch theme">
-            {`theme: ${THEME_LABELS[theme]}`}
-          </button>
-          <button onClick={() => navigate("/create")}>new</button>
-        </div>
-      </div>
+        </>
+      } />
     );
   }
 

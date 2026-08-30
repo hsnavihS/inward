@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEntries } from "../context/EntriesContext";
 
 // components
+import Navbar from "../components/Navbar";
 import EntryForm from "../components/EntryForm";
 import ConfirmModal from "../components/ConfirmModal";
 import ImagePreviewModal from "../components/ImagePreviewModal";
@@ -32,8 +33,8 @@ export default function EntryDetail() {
   if (!entry) {
     return (
       <div>
+        <Navbar left={<button onClick={() => navigate(-1)}>back</button>} />
         <p className="dim">Entry not found.</p>
-        <button onClick={() => navigate(-1)}>back</button>
       </div>
     );
   }
@@ -41,7 +42,7 @@ export default function EntryDetail() {
   if (editing) {
     return (
       <div className="page-full">
-        <button className="back-link" onClick={() => setEditing(false)}>back</button>
+        <Navbar left={<button onClick={() => setEditing(false)}>back</button>} />
         <h1>Edit Entry</h1>
         <EntryForm
           initialTitle={entry.title}
@@ -61,7 +62,7 @@ export default function EntryDetail() {
 
   return (
     <div>
-      <button className="back-link" onClick={() => navigate(-1)}>back</button>
+      <Navbar left={<button onClick={() => navigate(-1)}>back</button>} />
       <h1>{entry.title}</h1>
       <div className="entry-meta" style={{ display: "flex", justifyContent: "space-between" }}>
         <span>Created: {formatTime(entry.createdAt)}</span>

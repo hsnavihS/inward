@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEntries } from "../context/EntriesContext";
 
 // components
+import Navbar from "../components/Navbar";
 import EntryForm from "../components/EntryForm";
 
 export default function CreateEntry() {
@@ -12,10 +13,9 @@ export default function CreateEntry() {
   const navigate = useNavigate();
 
   return (
-    <>
-      <button className="back-link" onClick={() => navigate(-1)}>back</button>
-      <div className="page-full">
-        <h1>New Entry</h1>
+    <div className="page-full">
+      <Navbar left={<button onClick={() => navigate(-1)}>back</button>} />
+      <h1>New Entry</h1>
         <EntryForm
           onSubmit={({ title, body, tags, images }) => {
             const entry = addEntry({ title, body, tags, images });
@@ -23,7 +23,6 @@ export default function CreateEntry() {
           }}
           onCancel={() => navigate("/")}
         />
-      </div>
-    </>
+    </div>
   );
 }
