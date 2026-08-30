@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 // context
 import { useEntries } from "../context/EntriesContext";
 import { useTags } from "../context/TagsContext";
+import { useTheme } from "../context/ThemeContext";
 
 // hooks
 import { useDebounce } from "../hooks/useDebounce";
@@ -17,8 +18,11 @@ import SearchBar from "../components/SearchBar";
 import FilterPanel from "../components/FilterPanel";
 
 export default function Home() {
+  const THEME_LABELS = { crt: "crt", sakura: "sakura", blue: "blue", crimson: "crimson" };
+
   const { entries, loading, deleteEntry } = useEntries();
   const { tags } = useTags();
+  const { theme, cycleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -33,7 +37,7 @@ export default function Home() {
 
   // pagination — read from query param, default to 1
   const page = Number(searchParams.get("page")) || 1;
-  const ENTRIES_PER_PAGE = 5;
+  const ENTRIES_PER_PAGE = 10;
 
   const setPage = useCallback((p: number) => {
     if (p <= 1) {
@@ -109,11 +113,17 @@ export default function Home() {
     );
   }
 
+
   function renderHeader() {
     return (
       <div className="header">
         <h1>Inward</h1>
-        <button onClick={() => navigate("/create")}>new</button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={cycleTheme} title="Switch theme">
+            {`theme: ${THEME_LABELS[theme]}`}
+          </button>
+          <button onClick={() => navigate("/create")}>new</button>
+        </div>
       </div>
     );
   }

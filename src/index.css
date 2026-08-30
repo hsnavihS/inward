@@ -33,10 +33,82 @@
   color: var(--text);
   background: var(--bg);
   color-scheme: dark;
+}
+
+/* ── Cherry Blossom (light) ───────────────────────── */
+
+[data-theme="sakura"] {
+  --bg: #fdf6f0;
+  --bg-surface: #f5ebe0;
+  --bg-card: #f0e4d866;
+  --border: #dbc5b0;
+  --border-glow: #d4637a44;
+  --text: #6b5466;
+  --text-h: #3d2b3a;
+  --accent: #d4637a;
+  --accent-dim: #b04e65;
+  --accent-bg: rgba(212, 99, 122, 0.08);
+  --danger: #c0392b;
+  --danger-dim: #922b20;
+  --warn: #d4a03c;
+
+  --glow: 0 0 8px rgba(212, 99, 122, 0.25), 0 0 20px rgba(212, 99, 122, 0.08);
+  --glow-strong: 0 0 10px rgba(212, 99, 122, 0.4), 0 0 30px rgba(212, 99, 122, 0.15);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  color-scheme: light;
+}
+
+/* ── Blue Dark ─────────────────────────────────── */
+
+[data-theme="blue"] {
+  --bg: #002b36;
+  --bg-surface: #073642;
+  --bg-card: #07364266;
+  --border: #586e75;
+  --border-glow: #268bd244;
+  --text: #839496;
+  --text-h: #eee8d5;
+  --accent: #268bd2;
+  --accent-dim: #1a6091;
+  --accent-bg: rgba(38, 139, 210, 0.08);
+  --danger: #dc322f;
+  --danger-dim: #992220;
+  --warn: #b58900;
+
+  --glow: 0 0 8px rgba(38, 139, 210, 0.3), 0 0 20px rgba(38, 139, 210, 0.1);
+  --glow-strong: 0 0 10px rgba(38, 139, 210, 0.5), 0 0 30px rgba(38, 139, 210, 0.2);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
 
   @media (max-width: 768px) {
     font-size: 14px;
   }
+}
+
+/* ── Crimson Dark ─────────────────────────────────── */
+
+[data-theme="crimson"] {
+  --bg: #1a0a0e;
+  --bg-surface: #2a1216;
+  --bg-card: #2a121666;
+  --border: #5c2a2e;
+  --border-glow: #c0392b44;
+  --text: #c4a0a0;
+  --text-h: #f2d6d6;
+  --accent: #c0392b;
+  --accent-dim: #8e2a20;
+  --accent-bg: rgba(192, 57, 43, 0.08);
+  --danger: #e74c3c;
+  --danger-dim: #a93226;
+  --warn: #d4a03c;
+
+  --glow: 0 0 8px rgba(192, 57, 43, 0.3), 0 0 20px rgba(192, 57, 43, 0.1);
+  --glow-strong: 0 0 10px rgba(192, 57, 43, 0.5), 0 0 30px rgba(192, 57, 43, 0.2);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
 }
 
 /* ── Reset ────────────────────────────────────────── */
@@ -67,6 +139,22 @@ body::after {
   pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
   z-index: 9999;
+}
+
+/* Subtle effects for sakura */
+:root[data-theme="sakura"] body {
+  background: var(--bg);
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.04) 2px,
+      rgba(0, 0, 0, 0.04) 4px);
+  background-attachment: fixed;
+}
+
+:root[data-theme="sakura"] body::after {
+  background: radial-gradient(ellipse at center, transparent 75%, rgba(0, 0, 0, 0.12) 100%);
 }
 
 #root {
@@ -800,6 +888,21 @@ li strong {
 
 ::selection {
   background: rgba(51, 255, 153, 0.25);
+  color: #fff;
+}
+
+[data-theme="sakura"] ::selection {
+  background: rgba(212, 99, 122, 0.25);
+  color: #3d2b3a;
+}
+
+[data-theme="solarized"] ::selection {
+  background: rgba(38, 139, 210, 0.25);
+  color: #fff;
+}
+
+[data-theme="crimson"] ::selection {
+  background: rgba(192, 57, 43, 0.25);
   color: #fff;
 }
 
