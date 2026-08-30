@@ -2,9 +2,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
-type Theme = "crt" | "sakura" | "blue" | "crimson";
+type Theme = "noir" | "sakura" | "blue" | "crimson";
 
-const THEMES: Theme[] = ["crt", "sakura", "blue", "crimson"];
+const THEMES: Theme[] = ["noir", "sakura", "blue", "crimson"];
 const THEME_KEY = "inward-theme";
 
 interface ThemeContext {
@@ -23,11 +23,11 @@ export function useTheme(): ThemeContext {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem(THEME_KEY);
-    return THEMES.includes(saved as Theme) ? (saved as Theme) : "crt";
+    return THEMES.includes(saved as Theme) ? (saved as Theme) : "noir";
   });
 
   useEffect(() => {
-    if (theme === "crt") {
+    if (theme === "noir") {
       delete document.documentElement.dataset.theme;
     } else {
       document.documentElement.dataset.theme = theme;

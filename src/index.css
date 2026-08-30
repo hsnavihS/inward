@@ -5,10 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
-  --bg: #0a0a0f;
-  --bg-surface: #12121a;
-  --bg-card: #16162266;
-  --border: #2a2a3a;
+  --bg: #0c1120;
+  --bg-surface: #13192d;
+  --bg-card: #17243866;
+  --border: #21324d;
   --border-glow: #33ff9944;
   --text: #8b9caa;
   --text-h: #d4ffe0;

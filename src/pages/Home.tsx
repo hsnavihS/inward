@@ -23,7 +23,7 @@ import { exportBackup, importBackup } from "../backup";
 import { pushAllEntries, pushTags } from "../sync";
 
 export default function Home() {
-  const THEME_LABELS = { crt: "crt", sakura: "sakura", blue: "blue", crimson: "crimson" };
+  const THEME_LABELS = { noir: "noir", sakura: "sakura", blue: "blue", crimson: "crimson" };
 
   const { entries, loading, deleteEntry, replaceEntries } = useEntries();
   const { tags, replaceTags } = useTags();
