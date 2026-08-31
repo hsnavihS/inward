@@ -3,7 +3,8 @@ import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
 // utilities
-import { deriveKey, deriveVaultId, verifyPassphrase } from "../crypto";
+import { deriveKey, deriveVaultId } from "../crypto";
+import { vaultExists } from "../sync";
 
 interface VaultContext {
   key: CryptoKey;
@@ -28,18 +29,21 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError("");
     try {
-      const valid = await verifyPassphrase(passphrase);
-      if (!valid) {
-        setError("Wrong passphrase");
-        return;
-      }
       const [key, vaultId] = await Promise.all([
         deriveKey(passphrase),
         deriveVaultId(passphrase),
       ]);
+
+      const doesVaultExist = await vaultExists(vaultId);
+      if (!doesVaultExist) {
+        setError("Vault does not exist");
+        setLoading(false);
+        return;
+      }
+
       setVault({ key, vaultId });
     } catch {
-      setError("Failed to derive key");
+      setError("Failed to unlock vault");
     } finally {
       setLoading(false);
     }

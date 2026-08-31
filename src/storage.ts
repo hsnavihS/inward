@@ -38,18 +38,20 @@ function indexedDbPut(db: IDBDatabase, key: string, value: unknown): Promise<voi
 }
 
 // Encrypt a JS value and store it in IndexedDB
-export async function encryptAndSave<T>(key: string, data: T, cryptoKey: CryptoKey): Promise<void> {
+export async function encryptAndSave<T>(key: string, data: T, cryptoKey: CryptoKey, vaultId: string): Promise<void> {
+  const storeKey = `${vaultId}:${key}`;
   const json = JSON.stringify(data);
   const encrypted = await encrypt(json, cryptoKey);
   const db = await openDB();
-  await indexedDbPut(db, key, encrypted);
+  await indexedDbPut(db, storeKey, encrypted);
   db.close();
 }
 
 // Load and decrypt a value from IndexedDB. Returns null if key doesn't exist.
-export async function loadAndDecrypt<T>(key: string, cryptoKey: CryptoKey): Promise<T | null> {
+export async function loadAndDecrypt<T>(key: string, cryptoKey: CryptoKey, vaultId: string): Promise<T | null> {
+  const storeKey = `${vaultId}:${key}`;
   const db = await openDB();
-  const record = await indexedDbGet(db, key) as { ciphertext: string; iv: string } | undefined;
+  const record = await indexedDbGet(db, storeKey) as { ciphertext: string; iv: string } | undefined;
   db.close();
   if (!record) return null;
   const json = await decrypt(record.ciphertext, record.iv, cryptoKey);
@@ -57,11 +59,12 @@ export async function loadAndDecrypt<T>(key: string, cryptoKey: CryptoKey): Prom
 }
 
 // Remove a key from IndexedDB
-export async function removeEncrypted(key: string): Promise<void> {
+export async function removeEncrypted(key: string, vaultId: string): Promise<void> {
+  const storeKey = `${vaultId}:${key}`;
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).delete(key);
+    tx.objectStore(STORE_NAME).delete(storeKey);
     tx.oncomplete = () => { db.close(); resolve(); };
     tx.onerror = () => { db.close(); reject(tx.error); };
   });

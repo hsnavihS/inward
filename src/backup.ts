@@ -19,8 +19,8 @@ const TAGS_KEY = "tags";
 
 /** Build encrypted backup and trigger browser download as .inw file */
 export async function exportBackup(key: CryptoKey, vaultId: string): Promise<void> {
-  const entries = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key)) ?? [];
-  const tags = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key)) ?? [];
+  const entries = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key, vaultId)) ?? [];
+  const tags = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key, vaultId)) ?? [];
 
   const payload: BackupPayload = {
     entries,
@@ -73,8 +73,8 @@ export async function importBackup(
   }
 
   // Merge with existing local data
-  const localEntries = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key)) ?? [];
-  const localTags = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key)) ?? [];
+  const localEntries = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key, vaultId)) ?? [];
+  const localTags = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key, vaultId)) ?? [];
 
   const mergedEntries = mergeEntries(localEntries, payload.entries);
 
@@ -85,8 +85,8 @@ export async function importBackup(
   ];
 
   // Persist merged data
-  await encryptAndSave(ENTRIES_KEY, mergedEntries, key);
-  await encryptAndSave(TAGS_KEY, mergedTags, key);
+  await encryptAndSave(ENTRIES_KEY, mergedEntries, key, vaultId);
+  await encryptAndSave(TAGS_KEY, mergedTags, key, vaultId);
 
   // Sync to Firestore (fire-and-forget)
   pushAllEntries(vaultId, mergedEntries, key).catch((err) => {

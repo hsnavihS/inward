@@ -10,6 +10,16 @@ import {
 import { encrypt, decrypt } from "./crypto";
 import { db, isFirebaseConfigured } from "./firebase";
 
+// -- Vault existence check --
+
+/** Check if a vault exists in Firestore */
+export async function vaultExists(vaultId: string): Promise<boolean> {
+  if (!isFirebaseConfigured || !db) return false;
+
+  const snap = await getDocs(collection(db, "vaults", vaultId, "entries"));
+  return !snap.empty;
+}
+
 // -- Entries --
 
 /** Push a single encrypted entry to Firestore */

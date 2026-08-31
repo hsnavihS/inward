@@ -44,14 +44,14 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const local = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key)) ?? [];
+        const local = (await loadAndDecrypt<Entry[]>(ENTRIES_KEY, key, vaultId)) ?? [];
         setEntries(local);
 
         const remote = await pullEntries<Entry>(vaultId, key);
         if (remote.length > 0) {
           const merged = mergeEntries(local, remote);
           setEntries(merged);
-          await encryptAndSave(ENTRIES_KEY, merged, key);
+          await encryptAndSave(ENTRIES_KEY, merged, key, vaultId);
         }
       } catch (err) {
         setError("Failed to load entries: " + (err as Error).message);
@@ -63,7 +63,7 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
 
   const persistAndSet = (updated: Entry[]) => {
     setEntries(updated);
-    encryptAndSave(ENTRIES_KEY, updated, key).catch((err) =>
+    encryptAndSave(ENTRIES_KEY, updated, key, vaultId).catch((err) =>
       console.error("Failed to save entries:", err)
     );
   };

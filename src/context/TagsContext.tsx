@@ -38,7 +38,7 @@ export function TagsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const local = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key)) ?? [];
+        const local = (await loadAndDecrypt<Tag[]>(TAGS_KEY, key, vaultId)) ?? [];
         setTags(local);
 
         const remote = await pullTags<Tag[]>(vaultId, key);
@@ -47,7 +47,7 @@ export function TagsProvider({ children }: { children: ReactNode }) {
           const merged = [...local, ...remote.filter((t) => !localNames.has(t.name))];
           if (merged.length > local.length) {
             setTags(merged);
-            await encryptAndSave(TAGS_KEY, merged, key);
+            await encryptAndSave(TAGS_KEY, merged, key, vaultId);
           }
         }
       } catch (err) {
@@ -58,7 +58,7 @@ export function TagsProvider({ children }: { children: ReactNode }) {
 
   const persistTags = (updated: Tag[]) => {
     setTags(updated);
-    encryptAndSave(TAGS_KEY, updated, key).catch((err) =>
+    encryptAndSave(TAGS_KEY, updated, key, vaultId).catch((err) =>
       console.error("Failed to save tags:", err)
     );
     pushTags(vaultId, updated, key).catch((err) =>

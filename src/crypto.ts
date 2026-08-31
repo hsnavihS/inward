@@ -56,8 +56,3 @@ export async function sha256(input: string): Promise<string> {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
-
-export async function verifyPassphrase(input: string): Promise<boolean> {
-  const hash = await sha256(input);
-  return hash === import.meta.env.VITE_PASSPHRASE_HASH;
-}
